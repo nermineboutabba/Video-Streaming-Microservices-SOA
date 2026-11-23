@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StreamMesh SOA — Microservices Wire &amp; Demo Console</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #070b14;
+      background-image:
+        radial-gradient(circle at 15% 10%, rgba(239, 68, 68, 0.12), transparent 36%),
+        radial-gradient(circle at 85% 15%, rgba(245, 158, 11, 0.10), transparent 38%);
+      color: #f1f5f9;
+    }
+    .font-mono-code { font-family: 'JetBrains Mono', monospace; }
+    .panel {
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid rgba(51, 65, 85, 0.85);
+      box-shadow: 0 18px 40px -15px rgba(0, 0, 0, 0.65);
+    }
+    .panel-soft {
+      background: rgba(22, 31, 51, 0.78);
+      border: 1px solid rgba(71, 85, 105, 0.55);
+    }
+    ::-webkit-scrollbar { width: 7px; height: 7px; }
+    ::-webkit-scrollbar-track { background: #0b1120; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 9999px; }
+  </style>
+</head>
+<body class="min-h-screen antialiased pb-12">
+
+  <!-- Broadcast Console Header -->
+  <header class="sticky top-0 z-30 border-b border-slate-800/90 bg-[#070B14]/90 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3.5">
+        <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-red-600 via-rose-600 to-amber-500 flex items-center justify-center font-mono-code font-bold text-white shadow-lg shadow-red-600/30 text-sm">
+          SOA
+        </div>
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <h1 class="text-base sm:text-lg font-extrabold tracking-tight text-white">StreamMesh SOA &mdash; Microservices Wire Console</h1>
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono-code font-bold uppercase tracking-wider bg-amber-500/15 text-amber-300 border border-amber-500/35">
+              Backend Demo Harness
+            </span>
+          </div>
+          <p class="text-xs text-slate-400">Express Gateway (:3001) &bull; Apollo GraphQL (:4000) &bull; 3 gRPC Proto Services &bull; Apache Kafka Events</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2.5">
+        <button onclick="seedSampleVideos()" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-red-600 to-amber-600 hover:opacity-95 text-white shadow-md shadow-red-900/30 transition-all">
+          + Seed Sample Catalog (gRPC)
+        </button>
+        <button onclick="refreshAll()" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors">
+          Refresh Mesh
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 pt-6 space-y-6">
+
+    <!-- Live Service Mesh Health Telemetry -->
+    <section class="panel rounded-2xl p-4 sm:p-5">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+        <span class="text-xs font-mono-code font-bold uppercase tracking-wider text-slate-400">Live Microservice Mesh Topology</span>
+        <span id="kafka-mode-badge" class="text-xs font-mono-code px-2.5 py-0.5 rounded-md bg-slate-800 text-slate-300 border border-slate-700">Checking broker...</span>
+      </div>
+      <div id="health-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3"></div>
+    </section>
+
+    <!-- Main 2-Column Interactive Console -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+      <!-- Left 7 Cols: Video Feed, Stream Player, Upload/Interactions, User Auth -->
+      <div class="lg:col-span-7 space-y-6">
+
+        <!-- Video Feed + GraphQL Mode Switcher -->
+        <section class="panel rounded-2xl p-5 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 class="text-base font-extrabold text-white">Video Service Catalog (gRPC + GraphQL)</h2>
+              <p class="text-xs text-slate-400">Fetches SQLite video records routed through the API Gateway</p>
+            </div>
+            <div class="flex flex-wrap gap-1.5">
+              <button onclick="loadVideos('rest')" id="tab-rest" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-red-600 text-white">REST /api/videos</button>
+              <button onclick="loadVideos('graphql')" id="tab-graphql" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:text-white">GraphQL getVideos</button>
+              <button onclick="loadVideos('trending')" id="tab-trending" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:text-white">Trending</button>
+            </div>
+          </div>
+
+          <!-- Search & Create Video Bar -->
+          <div class="flex flex-col sm:flex-row gap-2.5">
+            <input id="search-input" type="text" placeholder="Search videos via gRPC SearchVideos..." class="flex-1 rounded-xl bg-slate-900 border border-slate-700 px-3.5 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500" />
+            <button onclick="searchVideos()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold text-slate-100">Search gRPC</button>
+          </div>
+
+          <div id="video-list" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+        </section>
+
+        <!-- Active Video Inspector & Interaction Triggers -->
+        <section id="active-video-panel" class="panel rounded-2xl p-5 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <span class="text-[11px] font-mono-code font-bold uppercase tracking-wider text-amber-400">Selected Video &amp; gRPC Interaction Client</span>
+              <h3 id="sel-title" class="text-lg font-extrabold text-white mt-0.5">Select or seed a video above</h3>
+            </div>
+            <span id="sel-meta" class="text-xs font-mono-code px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-700 text-slate-300">ID: --</span>
+          </div>
+
+          <!-- Broadcast Signal Stage / Player -->
+          <div id="player-stage" class="rounded-xl bg-[#070B14] border border-slate-800 overflow-hidden min-h-[190px] flex flex-col items-center justify-center p-5 text-center">
+            <p class="text-xs font-mono-code text-slate-400">Select any catalog item to inspect stream metadata, trigger gRPC LikeVideo, or post comments via InteractionService.</p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2.5">
+            <button onclick="likeSelectedVideo()" id="btn-like" disabled class="px-4 py-2 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-500 disabled:opacity-40 text-white transition-colors">
+              &#9829; Like Video (gRPC LikeVideo)
+            </button>
+            <input id="comment-input" type="text" placeholder="Write a comment via InteractionService..." class="flex-1 min-w-[180px] rounded-xl bg-slate-900 border border-slate-700 px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-red-500" />
+            <button onclick="addCommentToSelected()" id="btn-comment" disabled class="px-4 py-2 rounded-xl text-xs font-bold bg-amber-600 hover:bg-amber-500 disabled:opacity-40 text-white transition-colors">
+              Post Comment
+            </button>
+          </div>
+
+          <div id="comments-box" class="space-y-2 pt-2 border-t border-slate-800"></div>
+        </section>
+
+        <!-- Auth & Create Video Row -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <section class="panel rounded-2xl p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-extrabold text-white">User gRPC Auth (:50051)</h3>
+              <span id="auth-status" class="text-[11px] font-mono-code text-slate-400">Guest</span>
+            </div>
+            <input id="auth-user" type="text" value="nermine_demo" placeholder="Username" class="w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-1.5 text-xs text-white" />
+            <input id="auth-email" type="email" value="nermine.demo@streammesh.dev" placeholder="Email" class="w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-1.5 text-xs text-white" />
+            <input id="auth-pass" type="password" value="StreamMesh2026!" placeholder="Password" class="w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-1.5 text-xs text-white" />
+            <div class="flex gap-2">
+              <button onclick="registerUser()" class="flex-1 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200 border border-slate-700">Register gRPC</button>
+              <button onclick="loginUser()" class="flex-1 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-xs font-bold text-white">Login JWT</button>
+            </div>
+          </section>
+
+          <section class="panel rounded-2xl p-4 space-y-3">
+            <h3 class="text-sm font-extrabold text-white">Create Video Metadata (:50052)</h3>
+            <input id="new-title" type="text" placeholder="Video title (e.g. gRPC & Kafka Mesh Demo)" class="w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-1.5 text-xs text-white" />
+            <input id="new-cat" type="text" value="Distributed Systems" placeholder="Category" class="w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-1.5 text-xs text-white" />
+            <input id="new-desc" type="text" placeholder="Short description" class="w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-1.5 text-xs text-white" />
+            <button onclick="createVideo()" class="w-full py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-xs font-bold text-white">CreateVideo via gRPC</button>
+          </section>
+        </div>
+      </div>
+
+      <!-- Right 5 Cols: Live Wire Protocol & Kafka Event Inspector -->
+      <aside class="lg:col-span-5 panel rounded-2xl p-5 space-y-4 lg:sticky lg:top-24">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div>
+            <span class="text-[11px] font-mono-code font-bold uppercase tracking-wider text-red-400">Real-Time Protocol Telemetry</span>
+            <h2 class="text-base font-extrabold text-white">Wire, gRPC &amp; Kafka Trace Log</h2>
+          </div>
+          <button onclick="clearTrace()" class="px-2.5 py-1 rounded-lg text-xs font-mono-code bg-slate-800 hover:bg-slate-700 text-slate-300">Clear</button>
+        </div>
+
+        <div id="latest-payload-box" class="rounded-xl bg-[#070B14] border border-slate-800 p-3.5 font-mono-code text-xs text-emerald-300 max-h-64 overflow-auto whitespace-pre-wrap">
+// Waiting for first API / GraphQL / gRPC call...
+        </div>
+
+        <div class="space-y-2">
+          <div class="text-xs font-mono-code uppercase tracking-wider text-slate-400">Recent Service Hops</div>
+          <div id="trace-list" class="space-y-2 max-h-[380px] overflow-y-auto pr-1"></div>
+        </div>
+      </aside>
+
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

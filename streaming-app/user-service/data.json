@@ -1,0 +1,76 @@
+{
+  "users": [
+    {
+      "user_id": "05e9bac5-67e4-4487-a4b5-def7443dd7a4",
+      "username": "farah",
+      "email": "farah@example.com",
+      "password": "$2a$10$7kLZ4txdRLYNMCH0nqsbnOo9OFxPJ1pSG/gFmMa.YkSI2kRi3JGgS"
+    },
+    {
+      "user_id": "2b0012bb-dd37-4cc8-bc73-feff180493b6",
+      "username": "newUser",
+      "email": "newUser@test.com",
+      "password": "$2a$10$r0Xx95MCXIVBVkB5aUoGVuo3UabfZHS4lSzWVW6jDx4t1uxGg4o92",
+      "created_at": "2026-05-17T12:31:50.421Z"
+    },
+    {
+      "user_id": "454bb6cd-97ed-4b62-9106-d39d574f1165",
+      "username": "mina",
+      "email": "mina@test.com",
+      "password": "$2a$10$0Eg9jgTjAUMj5MN7RvyomuLrBOz3CI62ew76F/OZoGWdjGzR/Za0u",
+      "created_at": "2026-05-16T15:24:36.029Z"
+    },
+    {
+      "user_id": "6510722b-be31-4c5f-9f2b-50c368cc8e1d",
+      "username": "chourouk",
+      "email": "chourouk@example.com",
+      "password": "$2a$10$kH72moXbYhiXleTckUh8R.1tMSaV8ehAtop4oGyjN2B/BX.qtBCsy"
+    },
+    {
+      "user_id": "a87a3eb4-56df-430a-bcb6-635b28355f90",
+      "username": "testuser2",
+      "email": "test2@example.com",
+      "password": "$2a$10$RpKPEv0uqoMXW0kYxGHX.uwlviAU1d0MFa4uUCcL.WyV21ftWskeC"
+    },
+    {
+      "user_id": "bdd1ac8e-fcc1-4fc9-bcd9-16c4d640cbe6",
+      "username": "nermine",
+      "email": "nermine@test.com",
+      "password": "$2a$10$KIhIwOCr7bz3nCz.wvECiua.U.LV2.ioT4bk2EsyDqGFmRGOGujJu",
+      "created_at": "2026-05-17T12:30:26.851Z"
+    },
+    {
+      "user_id": "eb4daf87-8d33-41af-9b41-169a0097f453",
+      "username": "nermine_demo",
+      "email": "nermine.demo@streammesh.dev",
+      "password": "$2a$10$hWd7SREbb9LEuCkkMRBy4.VZQo5rY3xUhzfOUQbRuUzrPThgeY10C",
+      "created_at": "2026-11-17T09:59:33.146Z"
+    },
+    {
+      "user_id": "fac36620-7e3d-405f-9409-e0c8ec482e7e",
+      "username": "updateduser",
+      "email": "updated@example.com",
+      "password": "$2a$10$VNIRkAwv60w529qFGxuwFefxmUXimgStMXgTB9/g1TWJIhIOkBkZi"
+    }
+  ],
+  "subscriptions": [
+    {
+      "sub_id": "43c938a7-7add-4965-b040-cfa1c7fc7bf7",
+      "follower_id": "a87a3eb4-56df-430a-bcb6-635b28355f90",
+      "following_id": "fac36620-7e3d-405f-9409-e0c8ec482e7e",
+      "created_at": "2026-05-15T20:01:28.193Z"
+    },
+    {
+      "sub_id": "aa73c117-ee3a-4393-b413-23d2fe8043b2",
+      "follower_id": "user-id-2",
+      "following_id": "user-id-1",
+      "created_at": "2026-05-15T20:00:11.743Z"
+    },
+    {
+      "sub_id": "f21507da-3821-4f4b-98b6-ca90df46d5a4",
+      "follower_id": "",
+      "following_id": "",
+      "created_at": "2026-05-17T12:56:58.060Z"
+    }
+  ]
+}
